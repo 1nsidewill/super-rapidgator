@@ -1,0 +1,288 @@
+# Overview  
+Super Rapidgator는 개인 Ubuntu 서버에서 실행되는 자동 다운로드 및 파일 정리 서비스입니다. 
+
+**문제점:** 
+- Rapidgator에서 여러 파일을 수동으로 다운로드하는 번거로움
+- 다운로드 후 중첩된 압축 파일들을 수동으로 해제하고 정리하는 반복 작업
+- 로컬 컴퓨터에서 직접 다운로드하여 저장 공간 부족 및 관리 어려움
+
+**해결책:**
+- 웹 인터페이스를 통한 배치 다운로드 자동화
+- 중첩된 압축 파일 자동 해제 및 정리
+- 서버사이드 처리로 로컬 리소스 절약
+
+**대상 사용자:** 개인 사용자 (가상악기, 미디 샘플 파일 수집)
+
+# Core Features  
+
+## Phase 1: 기본 다운로드 기능
+### 1. Rapidgator 세션 관리
+- 자동 로그인 세션 유지
+- 세션 만료 시 자동 재로그인
+- 수동 로그인 옵션 제공
+
+### 2. 배치 다운로드 인터페이스
+- 여러 Rapidgator URL을 입력받는 텍스트 영역
+- 다운로드 진행 상황 실시간 표시
+- `/mnt/smb/downloads` 디렉토리에 파일 저장
+
+### 3. 웹 UI
+- Tailwind CSS 기반 깔끔한 인터페이스
+- 반응형 디자인
+- 다운로드 상태 모니터링
+
+## Phase 2: 자동 압축 해제 및 정리
+### 1. 스마트 압축 해제
+- ZIP, RAR 등 다양한 압축 형식 지원
+- 중첩된 압축 파일 재귀적 해제 ("peeldown")
+- 패턴 매칭 (0~10, 0~35 등의 분할 압축)
+
+### 2. 파일 정리
+- 최종 콘텐츠 파일만 보존
+- 불필요한 압축 파일 자동 삭제
+- 디렉토리 구조 최적화
+
+### 3. 진행 상황 모니터링
+- 압축 해제 진행률 표시
+- 오류 및 예외 상황 처리
+- 작업 완료 알림
+
+# User Experience  
+
+## 사용자 페르소나
+- **메인 사용자**: 개인 서버 운영자
+- **기술 수준**: 중급 (Docker, VPN 사용 가능)
+- **사용 목적**: 가상악기 및 미디 샘플 파일 수집
+
+## 주요 사용자 플로우
+1. **접속**: VPN → 개인 서버 → 특정 포트로 웹 인터페이스 접근
+2. **로그인 확인**: Rapidgator 세션 상태 확인 및 필요시 로그인
+3. **URL 입력**: 다운로드할 여러 URL을 텍스트 영역에 붙여넣기
+4. **다운로드 실행**: 프로세스 버튼 클릭 후 진행 상황 모니터링
+5. **자동 정리**: (Phase 2) 압축 해제 및 파일 정리 자동 실행
+
+## UI/UX 고려사항
+- 단순하고 직관적인 인터페이스
+- 진행 상황의 명확한 시각적 피드백
+- 오류 상황에 대한 친화적 메시지
+- 모바일 브라우저에서도 사용 가능한 반응형 디자인
+
+# Technical Architecture  
+
+## 시스템 구성 요소
+### 백엔드 (FastAPI)
+- **언어**: Python 3.13.3
+- **패키지 관리**: uv
+- **웹 프레임워크**: FastAPI
+- **비동기 처리**: asyncio, celery (백그라운드 작업)
+
+### 프론트엔드
+- **스타일링**: Tailwind CSS
+- **템플릿**: Jinja2
+- **JavaScript**: Vanilla JS (실시간 업데이트용)
+
+### 인프라
+- **배포**: Docker Compose + Traefik
+- **OS**: Ubuntu Server
+- **스토리지**: `/mnt/smb/downloads`
+- **네트워크**: VPN을 통한 프라이빗 접근
+
+## 데이터 모델
+### 다운로드 작업
+```python
+class DownloadTask:
+    id: str
+    urls: List[str]
+    status: TaskStatus  # pending, downloading, completed, failed
+    progress: float
+    created_at: datetime
+    completed_at: Optional[datetime]
+```
+
+### 압축 해제 작업
+```python
+class ExtractionTask:
+    id: str
+    source_files: List[str]
+    status: TaskStatus
+    extraction_depth: int
+    created_at: datetime
+```
+
+## APIs 및 통합
+### 내부 APIs
+- `/api/download/start` - 다운로드 시작
+- `/api/download/status/{task_id}` - 상태 확인
+- `/api/rapidgator/login` - 로그인 관리
+- `/api/extract/start` - 압축 해제 시작
+- `/api/files/list` - 파일 목록 조회
+
+### 외부 통합
+- **Rapidgator API**: 로그인 세션 관리
+- **웹 스크래핑**: 필요시 Selenium/Playwright
+
+## 인프라 요구사항
+- **최소 요구사항**: 2GB RAM, 50GB 디스크 공간
+- **권장 요구사항**: 4GB RAM, 200GB+ 디스크 공간
+- **네트워크**: 안정적인 인터넷 연결
+- **보안**: VPN 접근, 방화벽 설정
+
+# Development Roadmap  
+
+## Phase 1: MVP (기본 다운로드 기능)
+### 1.1 프로젝트 설정
+- uv 기반 Python 3.13.3 환경 구성
+- FastAPI 기본 구조 생성
+- Docker 컨테이너 설정
+
+### 1.2 Rapidgator 통합
+- 로그인 세션 관리 구현
+- 다운로드 기능 구현
+- 세션 만료 처리
+
+### 1.3 웹 인터페이스
+- Tailwind CSS 기반 UI 구성
+- URL 입력 폼 구현
+- 진행 상황 표시 기능
+
+### 1.4 배치 다운로드
+- 여러 URL 동시 처리
+- 백그라운드 작업 큐 구현
+- 파일 저장 및 관리
+
+### 1.5 배포 설정
+- Docker Compose 구성
+- Traefik 프록시 설정
+- 프로덕션 환경 최적화
+
+## Phase 2: 고급 기능 (자동 정리)
+### 2.1 압축 파일 처리
+- ZIP, RAR 압축 해제 구현
+- 중첩 압축 파일 감지
+- 재귀적 해제 로직
+
+### 2.2 스마트 정리
+- 패턴 매칭 알고리즘
+- 불필요한 파일 정리
+- 디렉토리 구조 최적화
+
+### 2.3 모니터링 강화
+- 상세한 진행 상황 표시
+- 오류 처리 및 로깅
+- 완료 알림 시스템
+
+## Phase 3: 향후 개선사항
+### 3.1 사용자 경험 향상
+- 다운로드 히스토리 관리
+- 즐겨찾기 URL 저장
+- 다운로드 스케줄링
+
+### 3.2 성능 최적화
+- 병렬 다운로드 최적화
+- 압축 해제 성능 개선
+- 메모리 사용량 최적화
+
+### 3.3 확장성
+- 다른 파일 호스팅 서비스 지원
+- 클라우드 스토리지 연동
+- API 확장
+
+# Logical Dependency Chain
+
+## 기초 인프라 (우선순위 1)
+1. **Python 환경 설정**: uv + Python 3.13.3
+2. **FastAPI 기본 구조**: 라우터, 미들웨어, 기본 설정
+3. **Docker 설정**: 컨테이너화 및 개발 환경
+
+## 핵심 기능 (우선순위 2)
+4. **Rapidgator 클라이언트**: 로그인 및 다운로드 로직
+5. **파일 관리**: 로컬 저장소 연동
+6. **백그라운드 작업**: 비동기 다운로드 처리
+
+## 사용자 인터페이스 (우선순위 3)
+7. **기본 웹 UI**: Tailwind CSS + 템플릿
+8. **실시간 업데이트**: WebSocket 또는 폴링
+9. **상태 모니터링**: 진행 상황 표시
+
+## 고급 기능 (우선순위 4)
+10. **압축 해제 엔진**: 다양한 형식 지원
+11. **스마트 정리**: 패턴 매칭 및 파일 정리
+12. **오류 처리**: 예외 상황 관리
+
+## 배포 및 운영 (우선순위 5)
+13. **프로덕션 배포**: Docker Compose + Traefik
+14. **로깅 및 모니터링**: 운영 도구 연동
+15. **보안 강화**: 인증 및 권한 관리
+
+# Risks and Mitigations  
+
+## 기술적 위험
+### 1. Rapidgator API 변경
+- **위험**: 로그인 방식 또는 다운로드 메커니즘 변경
+- **대응**: 웹 스크래핑 백업 방식 구현, 모듈화된 구조
+
+### 2. 압축 파일 처리 복잡성
+- **위험**: 다양한 압축 형식 및 중첩 구조 처리 어려움
+- **대응**: 단계별 구현, 충분한 테스트 케이스
+
+### 3. 대용량 파일 처리
+- **위험**: 메모리 및 디스크 공간 부족
+- **대응**: 스트리밍 다운로드, 청크 단위 처리
+
+## MVP 범위 관리
+### 1. 기능 과욕
+- **위험**: 초기 버전에 너무 많은 기능 포함
+- **대응**: Phase 1은 기본 다운로드만 집중
+
+### 2. 사용자 경험 복잡성
+- **위험**: 복잡한 UI로 인한 사용성 저하
+- **대응**: 단순하고 직관적인 인터페이스 우선
+
+## 리소스 제약
+### 1. 개발 시간
+- **위험**: 혼자 개발하는 프로젝트로 시간 부족
+- **대응**: 명확한 우선순위 설정, 단계별 개발
+
+### 2. 서버 리소스
+- **위험**: 동시 다운로드로 인한 서버 부하
+- **대응**: 적절한 동시성 제한, 리소스 모니터링
+
+# Appendix  
+
+## 연구 조사
+### 압축 해제 라이브러리
+- **Python**: `zipfile`, `rarfile`, `py7zr`
+- **시스템**: `unrar`, `7zip`
+
+### 다운로드 라이브러리
+- **HTTP 클라이언트**: `httpx`, `aiohttp`
+- **웹 스크래핑**: `selenium`, `playwright`
+
+## 기술 스펙
+### 디렉토리 구조
+```
+/mnt/smb/downloads/
+├── incoming/          # 다운로드 임시 폴더
+├── processing/        # 압축 해제 중인 파일들
+├── completed/         # 최종 정리된 파일들
+└── logs/             # 작업 로그
+```
+
+### 환경 변수
+```
+RAPIDGATOR_USERNAME=your_username
+RAPIDGATOR_PASSWORD=your_password
+DOWNLOAD_PATH=/mnt/smb/downloads
+MAX_CONCURRENT_DOWNLOADS=3
+```
+
+### Docker 네트워크
+```
+services:
+  app:
+    ports:
+      - "8000:8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rapidgator.rule=Host(`rapidgator.local`)"
+```

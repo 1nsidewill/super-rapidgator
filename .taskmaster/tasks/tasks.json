@@ -1,0 +1,210 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Repository and Environment",
+        "description": "Initialize the project repository with Python 3.13.3, create a virtual environment, set up package management (using uv) and basic directory structure according to the PRD.",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "high",
+        "details": "Create a Git repository. Set up a virtual environment with Python 3.13.3 using the uv package manager. Install essential packages such as fastapi (v0.95), uvicorn, and other dependencies using uv. Ensure the directory structure includes folders for incoming, processing, completed, and logs. Create a README and include environment variable templates. Use pre-commit hooks and linting (flake8).",
+        "testStrategy": "Validate the repository structure, run 'python --version' to verify the correct Python version, and use uv commands (such as 'uv list') to confirm dependency management, ensuring that basic scripts (like app.py) run without immediate errors.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Git Repository",
+            "description": "Set up a new Git repository to manage version control for the project. [Updated: 2025. 7. 8.]",
+            "dependencies": [],
+            "details": "Navigate to the project directory and run `git init` to initialize a new Git repository.\n<info added on 2025-07-08T05:23:14.028Z>\nRun git init in the current directory and check the default Git configuration settings by executing git config --list to verify details like username and email.\n</info added on 2025-07-08T05:23:14.028Z>",
+            "status": "in-progress",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Set Up Python 3.13.3 Virtual Environment Using uv",
+            "description": "Install Python 3.13.3 and create a virtual environment using the uv package manager.",
+            "dependencies": [],
+            "details": "Use `uv python install 3.13.3` to install Python 3.13.3, then run `uv venv --python 3.13.3` to create a virtual environment.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Install Essential Packages",
+            "description": "Install necessary Python packages within the virtual environment.",
+            "dependencies": [
+              2
+            ],
+            "details": "Activate the virtual environment and use `uv pip install <package_name>` to install required packages.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Configure Project Directory Structure",
+            "description": "Organize the project files and directories according to best practices.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create directories such as `src`, `tests`, and `docs` to structure the project appropriately.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Establish FastAPI Basic Structure",
+        "description": "Create the core FastAPI application structure including routers, middleware, and base endpoints required for rapidgator functionalities.",
+        "details": "Set up main.py to create a FastAPI instance. Organize routers for API endpoints. Implement basic middleware for logging and error handling. Use routing for health-check and base endpoints. Use Pydantic models for request/response schemas and include Jinja2 for template rendering. Ensure compatibility with Python 3.13.3.",
+        "testStrategy": "Run the FastAPI server with uvicorn, test endpoints (e.g., /health) using curl or Postman and verify response codes. Write unit tests for middleware functionality.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Docker Compose and Traefik Configuration",
+        "description": "Configure Docker Compose for containerization of the FastAPI application and set up Traefik as a reverse proxy.",
+        "details": "Create a Dockerfile based on Python 3.13.3. Write a docker-compose.yml that defines the app service, ports (8000:8000), and links to Traefik. Configure Traefik labels for routing (e.g., Host(`rapidgator.local`)). Ensure volumes are mounted for persistent storage (/mnt/smb/downloads) and logs. Validate that configuration supports VPN and firewall settings.",
+        "testStrategy": "Build and run containers locally. Use 'docker-compose up' to test accessibility over the defined port and domain name. Verify that Traefik routes traffic to the app properly.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Rapidgator Session Management",
+        "description": "Develop the login and session management features for Rapidgator including automatic login, session persistence, auto re-login on expiry, and manual override.",
+        "details": "Implement a Rapidgator client in Python using httpx (v0.24.0) for asynchronous HTTP requests. Encapsulate login logic in a class that stores session cookies. Detect session expiry and trigger auto re-login. Provide an API endpoint (/api/rapidgator/login) and fallback using Selenium or Playwright if scraping is required. Use environment variables for credentials.",
+        "testStrategy": "Mock Rapidgator API responses to simulate login and session expiry. Write unit tests to validate that session cookies are managed correctly. Test manual login endpoint via API calls.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Develop Batch Download API Endpoints",
+        "description": "Create API endpoints to accept multiple Rapidgator URLs for batch download, ensure request validation and provide a progress update mechanism.",
+        "details": "Implement POST endpoint at /api/download/start accepting a list of URLs. Validate input using Pydantic models. Integrate with Rapidgator client to initiate downloads. Update task status (pending, downloading, completed, failed) in the database or in-memory store. Use endpoints like /api/download/status/{task_id} to fetch progress.",
+        "testStrategy": "Write integration tests for API by sending POST requests with valid and invalid URL lists. Validate response structure and progress tracking. Use unit tests for Pydantic validations.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Integrate Background Task Queue",
+        "description": "Set up asynchronous background processing for download tasks using Celery along with asyncio support to handle concurrent downloads.",
+        "details": "Configure Celery (v5.3.0) with a broker like Redis. Create Celery tasks to handle the actual file downloading asynchronously. Ensure FastAPI endpoints trigger Celery tasks and track their state. Alternatively, use FastAPI's BackgroundTasks for simpler cases, but prioritize Celery given potential scalability demands.",
+        "testStrategy": "Run Celery workers and simulate multiple download tasks. Use unit tests to ensure tasks are enqueued and processed correctly. Monitor logs for simultaneous downloads and response time accuracy.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Create Web UI with Tailwind CSS",
+        "description": "Develop a responsive web interface using Tailwind CSS (v3.3) and Jinja2 templates, featuring a URL input form and progress display.",
+        "details": "Use Jinja2 for rendering HTML templates. Implement a simple, clean UI using Tailwind CSS. Create a form for inputting multiple Rapidgator URLs and display download progress in real time. Ensure the design is mobile-friendly and intuitive. Include client-side validation and error message display.",
+        "testStrategy": "Conduct browser tests for responsiveness. Use manual UI testing and Selenium for form submissions. Validate CSS responsiveness across devices and screen sizes.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Real-Time Progress Updates",
+        "description": "Enable real-time download and extraction progress updates on the UI using WebSockets or polling mechanism.",
+        "details": "Develop a WebSocket endpoint using FastAPI’s native WebSocket support. Implement client-side JavaScript (Vanilla JS) to open a WebSocket connection and display real-time progress updates. If WebSockets are not viable, implement periodic polling using AJAX calls. Ensure efficient handling of events to avoid UI blocking.",
+        "testStrategy": "Perform real-time UI tests using a browser to monitor live progress. Use WebSocket client libraries to simulate server messages. Validate fallback polling mechanism if WebSocket fails.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Implement File Management and Storage",
+        "description": "Develop file management logic to store downloaded files into the proper directories (/mnt/smb/downloads) according to the defined structure.",
+        "details": "Build a module to handle file operations such as moving downloads from a temporary folder to /mnt/smb/downloads/incoming. Ensure error checking for disk space and file overwrite issues. Use Python’s os and shutil libraries with added logging. Consider streaming downloads for large files to manage memory consumption.",
+        "testStrategy": "Write unit tests for file movement operations. Test on a simulated directory structure to ensure that files are stored in the correct paths without loss. Validate edge cases like disk full errors.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Develop Extraction Engine for Nested Archives",
+        "description": "Create a robust extraction engine to automatically detect, recursively extract various archive formats (ZIP, RAR, etc.) and handle nested archives.",
+        "details": "Implement extraction logic using Python libraries: zipfile for ZIP, rarfile for RAR (ensure unrar is installed), and py7zr for 7z files. Design a recursive function to handle nested archives (peeldown functionality) and integrate pattern matching for multi-part archives. Include safeguards to avoid infinite recursion in cases of corrupted archives.",
+        "testStrategy": "Use sample archives with known nested structure to test extraction. Create unit tests to simulate edge cases including unsupported formats and corrupt archives. Validate that unnecessary temporary files are properly cleaned up.",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Implement Smart File Cleaning and Directory Optimization",
+        "description": "Develop logic to clean up unnecessary files post-extraction, preserving only final content and optimizing directory structure.",
+        "details": "Design algorithms to detect and remove redundant compressed files once extraction is complete, using pattern matching to identify split archives (e.g., 0~10, 0~35). Use Python's os and pathlib libraries for file system operations. Integrate this functionality into the extraction workflow so that after extraction, the temporary files are deleted, and the directory structure is organized for user access.",
+        "testStrategy": "Set up test cases with known file structures and check that only final files remain. Write integration tests to simulate the extraction followed by cleanup. Use mock file systems (pyfakefs) where applicable.",
+        "priority": "medium",
+        "dependencies": [
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Enhance Logging, Monitoring, and Error Handling",
+        "description": "Implement comprehensive logging and error handling for downloads, extraction, and UI processes along with notification of task completion.",
+        "details": "Integrate Python’s logging module and consider using structured logging (e.g., loguru). Set up logging to write to /mnt/smb/downloads/logs. Implement error handling across the API endpoints, background tasks, and extraction engine. Optionally, integrate monitoring tools (e.g., Prometheus, Grafana) for performance metrics. Ensure that user-friendly error messages are shown on the UI and create an alert system upon job completion or failure.",
+        "testStrategy": "Perform fault injection testing to simulate network errors, extraction failures, and file management issues. Validate logs for correct error messages and test monitoring endpoint responses. Execute end-to-end tests simulating task failure scenarios.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          7,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-08T05:20:10.514Z",
+      "updated": "2025-07-08T05:23:24.588Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
