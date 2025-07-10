@@ -13,5 +13,4 @@ RUN uv sync --frozen --no-cache
 ENV PYTHONPATH="/app/src:/app:${PYTHONPATH}"
 
 # Run the application.
-# ⬇️ FastAPI 실행 – uvicorn 사용
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/.venv/bin/fastapi", "run", "main:app", "--port", "8000", "--host", "0.0.0.0"]
