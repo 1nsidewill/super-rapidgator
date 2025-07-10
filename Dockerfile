@@ -10,7 +10,7 @@ COPY . /app
 WORKDIR /app
 RUN uv sync --frozen --no-cache
 
-ENV PYTHONPATH=$PWD/src:$PYTHONPATH
+ENV PYTHONPATH="/app/src:/app:${PYTHONPATH}"
 
 # Run the application.
-CMD ["/app/.venv/bin/fastapi", "run", "app/main.py", "--port", "8000", "--host", "0.0.0.0"]
+CMD ["/app/.venv/bin/fastapi", "run", "src.super_rapidgator.main:app", "--port", "8000", "--host", "0.0.0.0"]
