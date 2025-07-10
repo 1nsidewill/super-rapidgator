@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+use 'uv run fastapi dev' to run the service since its made of uv and venv.
+and dont just rush coding and writing, inform me what is next plans and
+maybe you can suggest me with the options, ask for my choice, then proceed.
+
+그리고. 서버 실행해보겠습니다는 알겠는데.
+timeout을 걸거나, 아니면 결과를 보거나 해야될거 아니야
+내가 직접 skip 을 눌러야지만 다음 채팅으로 이뤄지게하지말고.

@@ -1,0 +1,11 @@
+# Task ID: 8
+# Title: Implement Real-Time Progress Updates
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Enable real-time download and extraction progress updates on the UI using WebSockets or polling mechanism.
+# Details:
+Develop a WebSocket endpoint using FastAPI’s native WebSocket support. Implement client-side JavaScript (Vanilla JS) to open a WebSocket connection and display real-time progress updates. If WebSockets are not viable, implement periodic polling using AJAX calls. Ensure efficient handling of events to avoid UI blocking.
+
+# Test Strategy:
+Perform real-time UI tests using a browser to monitor live progress. Use WebSocket client libraries to simulate server messages. Validate fallback polling mechanism if WebSocket fails.

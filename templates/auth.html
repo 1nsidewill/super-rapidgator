@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}인증 - {{ super() }}{% endblock %}
+
+{% block description %}Rapidgator 계정 로그인 상태를 확인하고 관리하세요{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[calc(100vh-10rem)] p-4 text-white">
+    <div class="w-full max-w-md">
+        <div id="auth-container" class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-hidden">
+            <!-- This content will be dynamically replaced by JavaScript -->
+            <div class="p-8 animate-pulse">
+                <div class="w-2/3 h-6 bg-gray-700 rounded mb-4"></div>
+                <div class="w-full h-4 bg-gray-700 rounded mb-2"></div>
+                <div class="w-full h-10 bg-gray-700 rounded mt-6"></div>
+            </div>
+    </div>
+    
+        <!-- Tips Section -->
+        <div class="mt-6 text-center text-xs text-gray-400">
+            <p>프리미엄 계정이 필요합니다. 세션은 자동으로 유지됩니다.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const authContainer = document.getElementById('auth-container');
+
+    const api = {
+        getStatus: () => fetch('/api/auth/status').then(res => res.json()),
+        login: (username, password) => fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        }).then(res => res.json()),
+        logout: () => fetch('/api/auth/logout', { method: 'POST' }).then(res => res.json()),
+    };
+
+    function showAlert(message, type = 'info') {
+        const bgColor = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            info: 'bg-blue-500'
+        }[type];
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `fixed bottom-5 right-5 ${bgColor} text-white py-2 px-4 rounded-lg shadow-lg z-50 animate-pulse`;
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+
+    const templates = {
+        loggedIn: (status) => `
+            <div class="p-6 md:p-8">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    <div>
+                        <h2 class="text-xl font-bold">로그인됨</h2>
+                        <p class="text-sm text-gray-400">Rapidgator 프리미엄 계정</p>
+                    </div>
+                </div>
+                <div class="space-y-3 text-sm border-t border-b border-gray-700 py-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">사용자:</span>
+                        <span class="font-medium">${status.session_data?.account_info?.username || '정보 없음'}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">만료일:</span>
+                        <span class="font-medium">${status.session_data?.account_info?.premium_until || '정보 없음'}</span>
+            </div>
+                     <div class="flex justify-between">
+                        <span class="text-gray-400">포인트:</span>
+                        <span class="font-medium">${status.session_data?.account_info?.points || '0'}</span>
+        </div>
+    </div>
+                <button id="logout-btn" class="w-full mt-6 px-4 py-2 border border-red-500/50 text-sm font-medium rounded-md shadow-sm text-red-400 hover:bg-red-500/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-red-500">
+                    로그아웃
+                </button>
+            </div>
+        `,
+        loggedOut: () => `
+            <div class="p-6 md:p-8">
+                <div class="mb-6 text-center">
+                     <h2 class="text-xl font-bold">Rapidgator 로그인</h2>
+                     <p class="text-sm text-gray-400">계속하려면 계정 정보를 입력하세요</p>
+                </div>
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label for="username" class="sr-only">사용자명</label>
+                        <input type="text" id="username" name="username" required placeholder="사용자명 또는 이메일" class="w-full bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">비밀번호</label>
+                        <input type="password" id="password" name="password" required placeholder="비밀번호" class="w-full bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <button type="submit" id="login-btn" class="w-full flex justify-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500">
+                        로그인
+                    </button>
+                </form>
+            </div>
+        `
+    };
+
+    async function render() {
+        try {
+            const status = await api.getStatus();
+            if (status.logged_in) {
+                authContainer.innerHTML = templates.loggedIn(status);
+                document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            } else {
+                authContainer.innerHTML = templates.loggedOut();
+                document.getElementById('login-form').addEventListener('submit', handleLogin);
+            }
+        } catch (error) {
+            authContainer.innerHTML = `<div class="p-8 text-center text-red-400">인증 상태를 불러오는 데 실패했습니다. <br/> 페이지를 새로고침 해주세요.</div>`;
+            showAlert('인증 상태 확인 중 오류 발생', 'error');
+            console.error(error);
+        }
+    }
+    
+    async function handleLogin(event) {
+        event.preventDefault();
+        const btn = document.getElementById('login-btn');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<div class="w-5 h-5 animate-spin border-2 border-white border-t-transparent rounded-full"></div>';
+
+        const username = event.target.elements.username.value;
+        const password = event.target.elements.password.value;
+
+        try {
+            const result = await api.login(username, password);
+            if (result.success) {
+                showAlert('로그인 성공!', 'success');
+                await render();
+                } else {
+                showAlert(result.message || '로그인 실패', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                }
+            } catch (error) {
+            showAlert('로그인 중 오류 발생', 'error');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            }
+    }
+
+    async function handleLogout() {
+            try {
+            const result = await api.logout();
+            if (result.success) {
+                showAlert('로그아웃 되었습니다.', 'success');
+                await render();
+                } else {
+                showAlert(result.message || '로그아웃 실패', 'error');
+                }
+            } catch (error) {
+            showAlert('로그아웃 중 오류 발생', 'error');
+            }
+    }
+    
+    // Initial render
+    render();
+});
+</script>
+{% endblock %} 

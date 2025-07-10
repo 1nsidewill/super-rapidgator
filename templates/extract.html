@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block title %}압축 해제 - {{ super() }}{% endblock %}
+
+{% block description %}다운로드된 아카이브 파일들을 자동으로 압축 해제하고 관리하세요{% endblock %}
+
+{% block content %}
+<div class="p-4 sm:p-6 lg:p-8 text-white">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold">아카이브 압축 해제</h1>
+        <p class="text-sm text-gray-400">
+            다운로드된 ZIP, RAR, 7Z 파일들을 자동으로 압축 해제하고 관리하세요.
+        </p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column: Main Content -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Archive Files List -->
+            <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md">
+                <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">압축 파일 목록</h2>
+                    <div class="flex items-center space-x-2">
+                        <button id="refresh-list-btn" class="p-2 rounded-md bg-gray-700 hover:bg-gray-600 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </button>
+                        <select id="filter-status" class="bg-gray-700 border-gray-600 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="all">전체</option>
+                            <option value="pending">대기 중</option>
+                            <option value="extracting">압축 해제 중</option>
+                            <option value="completed">완료</option>
+                            <option value="failed">실패</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div id="archives-list-container" class="overflow-x-auto">
+                        <!-- JS will populate this table -->
+                    </div>
+                     <div id="no-archives-message" class="text-center py-8 text-gray-400">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        <p class="mb-2">압축 파일이 없습니다</p>
+                        <p class="text-sm">먼저 디렉토리를 스캔하여 압축 파일을 찾아보세요</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Jobs -->
+            <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md">
+                <div class="p-4 border-b border-gray-700">
+                    <h2 class="text-lg font-semibold">진행 중인 작업</h2>
+                </div>
+                <div class="p-4">
+                    <div id="active-jobs">
+                        <div class="text-center py-4 text-gray-400">
+                            <p>진행 중인 압축 해제 작업이 없습니다</p>
+            </div>
+        </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Controls, Settings & Stats -->
+        <div class="lg:col-span-1 space-y-8">
+            <!-- Quick Actions -->
+            <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md p-4 space-y-3">
+                 <button id="scan-btn" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    디렉토리 스캔
+                </button>
+                <button id="extract-all-btn" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" disabled>
+                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    일괄 압축 해제
+                </button>
+                <button id="cleanup-btn" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    정리 (원본 파일 삭제)
+                </button>
+    </div>
+    
+        <!-- Extraction Settings -->
+            <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md">
+                <div class="p-4 border-b border-gray-700">
+                    <h2 class="text-lg font-semibold">압축 해제 설정</h2>
+            </div>
+                <div class="p-4">
+                <form id="settings-form" class="space-y-4">
+                    <div>
+                            <label for="extract-path" class="block text-sm font-medium text-gray-300 mb-1">해제 경로</label>
+                            <input type="text" id="extract-path" name="extract_path" value="{{ download_path or './downloads' }}" class="w-full bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500">
+                            <p class="mt-1 text-xs text-gray-400">압축 해제 파일이 저장될 경로입니다.</p>
+                        </div>
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-300 mb-1">기본 비밀번호 (선택)</label>
+                            <input type="password" id="password" name="password" placeholder="암호화된 압축 파일용" class="w-full bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                        <div class="space-y-2 pt-2">
+                             <label class="flex items-center">
+                                <input type="checkbox" id="auto-extract" name="auto_extract" checked class="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-300">자동 압축 해제</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="delete-after-extract" name="delete_after_extract" class="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-300">해제 후 원본 삭제</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-2">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                        설정 저장
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+            <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-md">
+                <div class="p-4 border-b border-gray-700">
+                    <h2 class="text-lg font-semibold">통계</h2>
+            </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="text-center">
+                            <div class="text-xl font-bold text-blue-400" id="total-archives">-</div>
+                            <div class="text-xs text-gray-400">총 압축 파일</div>
+                    </div>
+                    <div class="text-center">
+                            <div class="text-xl font-bold text-green-400" id="extracted-archives">-</div>
+                            <div class="text-xs text-gray-400">해제 완료</div>
+                    </div>
+                    <div class="text-center">
+                            <div class="text-xl font-bold text-yellow-400" id="pending-archives">-</div>
+                            <div class="text-xs text-gray-400">대기 중</div>
+                    </div>
+                    <div class="text-center">
+                            <div class="text-xl font-bold text-red-400" id="failed-archives">-</div>
+                            <div class="text-xs text-gray-400">실패</div>
+                        </div>
+                    </div>
+                     <div class="border-t border-gray-700 pt-4 space-y-2 text-sm">
+                         <div class="flex justify-between">
+                             <span class="text-gray-400">총 해제된 용량:</span>
+                             <span id="total-extracted-size" class="font-medium text-gray-200">-</span>
+                </div>
+                         <div class="flex justify-between">
+                             <span class="text-gray-400">마지막 스캔:</span>
+                             <span id="last-scan-time" class="font-medium text-gray-200">-</span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+    
+<!-- Modal Structure -->
+<div id="password-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center">
+    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
+        <h2 class="text-lg font-semibold mb-4 text-white">비밀번호 필요</h2>
+        <p id="password-modal-filename" class="text-sm text-gray-300 mb-4"></p>
+        <form id="password-modal-form">
+            <input type="hidden" id="password-modal-archive-id">
+            <input type="password" id="password-modal-input" class="w-full bg-gray-700 border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" placeholder="비밀번호 입력">
+            <div class="mt-4 flex justify-end space-x-2">
+                <button type="button" id="password-modal-cancel" class="px-4 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-gray-700">취소</button>
+                <button type="submit" class="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">확인</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const api = {
+        scan: () => fetch('/api/extract/scan', { method: 'POST' }).then(res => res.json()),
+        getArchives: (status = 'all') => fetch(`/api/extract/archives?status=${status}`).then(res => res.json()),
+        extractAll: () => fetch('/api/extract/all', { method: 'POST' }).then(res => res.json()),
+        extractSingle: (archiveId, password = null) => fetch(`/api/extract/single/${archiveId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        }).then(res => res.json()),
+        cleanup: () => fetch('/api/extract/cleanup', { method: 'POST' }).then(res => res.json()),
+        getStats: () => fetch('/api/extract/stats').then(res => res.json()),
+        getActiveJobs: () => fetch('/api/extract/jobs').then(res => res.json()),
+        saveSettings: (settings) => fetch('/api/extract/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        }).then(res => res.json())
+    };
+
+    const selectors = {
+        scanBtn: document.getElementById('scan-btn'),
+        extractAllBtn: document.getElementById('extract-all-btn'),
+        cleanupBtn: document.getElementById('cleanup-btn'),
+        refreshListBtn: document.getElementById('refresh-list-btn'),
+        filterStatus: document.getElementById('filter-status'),
+        archivesListContainer: document.getElementById('archives-list-container'),
+        noArchivesMessage: document.getElementById('no-archives-message'),
+        activeJobsContainer: document.getElementById('active-jobs'),
+        settingsForm: document.getElementById('settings-form'),
+        // Stats
+        totalArchives: document.getElementById('total-archives'),
+        extractedArchives: document.getElementById('extracted-archives'),
+        pendingArchives: document.getElementById('pending-archives'),
+        failedArchives: document.getElementById('failed-archives'),
+        totalExtractedSize: document.getElementById('total-extracted-size'),
+        lastScanTime: document.getElementById('last-scan-time'),
+        // Modal
+        passwordModal: document.getElementById('password-modal'),
+        passwordModalFilename: document.getElementById('password-modal-filename'),
+        passwordModalForm: document.getElementById('password-modal-form'),
+        passwordModalArchiveId: document.getElementById('password-modal-archive-id'),
+        passwordModalInput: document.getElementById('password-modal-input'),
+        passwordModalCancel: document.getElementById('password-modal-cancel'),
+    };
+    
+    function showAlert(message, type = 'info') {
+        const bgColor = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            info: 'bg-blue-500'
+        }[type];
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `fixed bottom-5 right-5 ${bgColor} text-white py-2 px-4 rounded-lg shadow-lg z-50 animate-pulse`;
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function getStatusBadge(status) {
+        const statusMap = {
+            'pending': 'bg-yellow-500/20 text-yellow-300',
+            'extracting': 'bg-blue-500/20 text-blue-300 animate-pulse',
+            'completed': 'bg-green-500/20 text-green-300',
+            'failed': 'bg-red-500/20 text-red-300',
+        };
+        const statusText = {
+            'pending': '대기 중',
+            'extracting': '추출 중',
+            'completed': '완료',
+            'failed': '실패',
+        }
+        return `<span class="px-2 py-1 text-xs font-medium rounded-full ${statusMap[status] || 'bg-gray-500/20 text-gray-300'}">${statusText[status] || status}</span>`;
+    }
+
+    function renderArchives(archives) {
+        if (!archives || archives.length === 0) {
+            selectors.archivesListContainer.innerHTML = '';
+            selectors.noArchivesMessage.classList.remove('hidden');
+            selectors.extractAllBtn.disabled = true;
+            return;
+        }
+        
+        selectors.noArchivesMessage.classList.add('hidden');
+        selectors.extractAllBtn.disabled = false;
+
+        const table = `
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-800">
+                    <tr>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">파일명</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">크기</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">상태</th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">생성일</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">작업</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-gray-800 divide-y divide-gray-700">
+                    ${archives.map(archive => `
+                        <tr id="archive-${archive.id}">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-200">${archive.filename}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${formatBytes(archive.size)}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm">${getStatusBadge(archive.status)}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-300">${new Date(archive.created_at).toLocaleString()}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                <button class="extract-single-btn text-blue-400 hover:text-blue-300" data-id="${archive.id}" data-filename="${archive.filename}" ${archive.status !== 'pending' ? 'disabled' : ''}>압축 해제</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        selectors.archivesListContainer.innerHTML = table;
+
+        document.querySelectorAll('.extract-single-btn').forEach(button => {
+            button.addEventListener('click', handleExtractSingle);
+        });
+    }
+
+    function renderActiveJobs(jobs) {
+        if (!jobs || jobs.length === 0) {
+            selectors.activeJobsContainer.innerHTML = '<div class="text-center py-4 text-gray-400"><p>진행 중인 압축 해제 작업이 없습니다</p></div>';
+            return;
+        }
+        
+        const jobsHtml = jobs.map(job => `
+            <div class="p-3 bg-gray-700/50 rounded-lg mb-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-200 truncate pr-4">${job.filename}</span>
+                    <span class="text-xs text-blue-300">압축 해제 중...</span>
+                </div>
+                <div class="w-full bg-gray-600 rounded-full h-1.5 mt-2">
+                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${job.progress || 0}%"></div>
+                </div>
+            </div>
+        `).join('');
+        selectors.activeJobsContainer.innerHTML = jobsHtml;
+    }
+
+    function updateStats(stats) {
+        if (!stats) return;
+        selectors.totalArchives.textContent = stats.total_archives ?? '-';
+        selectors.extractedArchives.textContent = stats.extracted ?? '-';
+        selectors.pendingArchives.textContent = stats.pending ?? '-';
+        selectors.failedArchives.textContent = stats.failed ?? '-';
+        selectors.totalExtractedSize.textContent = stats.total_extracted_size ? formatBytes(stats.total_extracted_size) : '-';
+        selectors.lastScanTime.textContent = stats.last_scan_time ? new Date(stats.last_scan_time).toLocaleString() : '-';
+    }
+
+    async function refreshAllData() {
+        const status = selectors.filterStatus.value;
+        const [archives, stats, jobs] = await Promise.all([
+            api.getArchives(status),
+            api.getStats(),
+            api.getActiveJobs()
+        ]);
+        renderArchives(archives.archives);
+        updateStats(stats.stats);
+        renderActiveJobs(jobs.jobs);
+    }
+    
+    async function handleScan() {
+        showAlert('디렉토리 스캔을 시작합니다...', 'info');
+        const result = await api.scan();
+        showAlert(result.message || '스캔이 완료되었습니다.', 'success');
+        await refreshAllData();
+    }
+
+    async function handleExtractAll() {
+        showAlert('일괄 압축 해제를 시작합니다...', 'info');
+        const result = await api.extractAll();
+        showAlert(result.message || '모든 파일의 압축 해제 작업이 시작되었습니다.', 'success');
+        await refreshAllData();
+    }
+
+    async function handleCleanup() {
+        if (confirm('압축 해제가 완료된 원본 아카이브 파일들을 정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+            showAlert('정리 작업을 시작합니다...', 'info');
+            const result = await api.cleanup();
+            showAlert(result.message || '정리 작업이 완료되었습니다.', 'success');
+            await refreshAllData();
+        }
+    }
+    
+    function handleExtractSingle(event) {
+        const button = event.currentTarget;
+        const archiveId = button.dataset.id;
+        const filename = button.dataset.filename;
+        
+        selectors.passwordModalArchiveId.value = archiveId;
+        selectors.passwordModalFilename.textContent = `파일: ${filename}`;
+        selectors.passwordModalInput.value = '';
+        selectors.passwordModal.classList.remove('hidden');
+        selectors.passwordModal.classList.add('flex');
+        selectors.passwordModalInput.focus();
+    }
+
+    async function handlePasswordSubmit(event) {
+        event.preventDefault();
+        const archiveId = selectors.passwordModalArchiveId.value;
+        const password = selectors.passwordModalInput.value;
+        
+        closePasswordModal();
+        showAlert(`${archiveId} 파일의 압축 해제를 시작합니다...`, 'info');
+        
+        try {
+            const result = await api.extractSingle(archiveId, password);
+            if (result.error) {
+                showAlert(result.error, 'error');
+            } else {
+                showAlert(result.message, 'success');
+            }
+        } catch (error) {
+            showAlert('압축 해제 중 오류가 발생했습니다.', 'error');
+        }
+        await refreshAllData();
+    }
+
+    function closePasswordModal() {
+        selectors.passwordModal.classList.add('hidden');
+        selectors.passwordModal.classList.remove('flex');
+    }
+
+    async function handleSaveSettings(event) {
+        event.preventDefault();
+        const formData = new FormData(selectors.settingsForm);
+        const settings = {
+            extract_path: formData.get('extract_path'),
+            password: formData.get('password'),
+            auto_extract: formData.get('auto_extract') === 'on',
+            delete_after_extract: formData.get('delete_after_extract') === 'on',
+        };
+        const result = await api.saveSettings(settings);
+        if (result.error) {
+            showAlert(result.error, 'error');
+        } else {
+            showAlert('설정이 성공적으로 저장되었습니다.', 'success');
+        }
+    }
+
+    selectors.scanBtn.addEventListener('click', handleScan);
+    selectors.extractAllBtn.addEventListener('click', handleExtractAll);
+    selectors.cleanupBtn.addEventListener('click', handleCleanup);
+
+    selectors.refreshListBtn.addEventListener('click', refreshAllData);
+    selectors.filterStatus.addEventListener('change', refreshAllData);
+    selectors.settingsForm.addEventListener('submit', handleSaveSettings);
+
+    selectors.passwordModalForm.addEventListener('submit', handlePasswordSubmit);
+    selectors.passwordModalCancel.addEventListener('click', closePasswordModal);
+    
+    // Initial data load and periodic refresh
+    refreshAllData();
+    setInterval(refreshAllData, 5000); // Refresh every 5 seconds
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,40 @@
+# Task ID: 7
+# Title: Create Web UI with Tailwind CSS
+# Status: done
+# Dependencies: 2
+# Priority: medium
+# Description: Develop a responsive web interface using Tailwind CSS (v3.3) and Jinja2 templates, featuring a URL input form and progress display.
+# Details:
+Use Jinja2 for rendering HTML templates. Implement a simple, clean UI using Tailwind CSS. Create a form for inputting multiple Rapidgator URLs and display download progress in real time. Ensure the design is mobile-friendly and intuitive. Include client-side validation and error message display.
+
+# Test Strategy:
+Conduct browser tests for responsiveness. Use manual UI testing and Selenium for form submissions. Validate CSS responsiveness across devices and screen sizes.
+
+# Subtasks:
+## 1. Jinja2 템플릿 엔진 설정 및 FastAPI 통합 [done]
+### Dependencies: None
+### Description: FastAPI 애플리케이션에 Jinja2 템플릿 엔진을 설정하고 통합합니다.
+### Details:
+Jinja2를 설치하고 FastAPI 애플리케이션에서 Jinja2Templates를 사용하여 템플릿 디렉토리를 설정합니다. ([fastapi.tiangolo.com](https://fastapi.tiangolo.com/advanced/templates/?utm_source=openai))
+
+## 2. Tailwind CSS v3.3 설정 및 CDN 통합 [done]
+### Dependencies: None
+### Description: Tailwind CSS v3.3을 설정하고 CDN을 통해 통합합니다.
+### Details:
+HTML 파일의 <head> 섹션에 Tailwind CSS Play CDN 스크립트를 추가하여 스타일링을 적용합니다. ([tailwindcss.com](https://tailwindcss.com/docs/installation/play-cdn?utm_source=openai))
+<info added on 2025-07-08T23:48:22.131Z>
+Tailwind CSS v3.3 has been fully integrated and the base UI structure completed. The base template (base.html) now employs a modern design system, while the dashboard page (dashboard.html) offers a clean, intuitive main interface. The download page (download.html) includes a URL input form with real-time progress tracking and batch management. The UI router has been enhanced for full integration with the live system, ensuring efficient download path delivery and authentication verification. The design emphasizes a modern, lightweight, and fully responsive layout with fast load times, smooth animations, and a refined color scheme featuring gradients. JavaScript enhancements provide real-time URL validation, AJAX-based download initiation and tracking, live system and authentication status updates, automatic refresh, and toast notifications. The server has been started for live testing.
+</info added on 2025-07-08T23:48:22.131Z>
+
+## 3. 메인 페이지 디자인 (URL 입력 폼, 깔끔하고 직관적인 디자인) [done]
+### Dependencies: 7.1, 7.2
+### Description: URL 입력 폼을 포함한 메인 페이지를 깔끔하고 직관적인 디자인으로 구현합니다.
+### Details:
+Jinja2 템플릿을 사용하여 URL 입력 폼을 포함한 메인 페이지를 생성하고, Tailwind CSS를 활용하여 현대적이고 가벼운 UI/UX 디자인을 적용합니다.
+
+## 4. 실시간 다운로드 진행 상황 표시 페이지 [done]
+### Dependencies: 7.3
+### Description: 실시간으로 다운로드 진행 상황을 표시하는 페이지를 구현합니다.
+### Details:
+JavaScript와 AJAX를 사용하여 서버에서 다운로드 진행 상황을 주기적으로 가져와 페이지에 업데이트합니다.
+

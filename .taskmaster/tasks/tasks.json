@@ -5,7 +5,7 @@
         "id": 1,
         "title": "Setup Project Repository and Environment",
         "description": "Initialize the project repository with Python 3.13.3, create a virtual environment, set up package management (using uv) and basic directory structure according to the PRD.",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "high",
         "details": "Create a Git repository. Set up a virtual environment with Python 3.13.3 using the uv package manager. Install essential packages such as fastapi (v0.95), uvicorn, and other dependencies using uv. Ensure the directory structure includes folders for incoming, processing, completed, and logs. Create a README and include environment variable templates. Use pre-commit hooks and linting (flake8).",
@@ -16,8 +16,8 @@
             "title": "Initialize Git Repository",
             "description": "Set up a new Git repository to manage version control for the project. [Updated: 2025. 7. 8.]",
             "dependencies": [],
-            "details": "Navigate to the project directory and run `git init` to initialize a new Git repository.\n<info added on 2025-07-08T05:23:14.028Z>\nRun git init in the current directory and check the default Git configuration settings by executing git config --list to verify details like username and email.\n</info added on 2025-07-08T05:23:14.028Z>",
-            "status": "in-progress",
+            "details": "Navigate to the project directory and run `git init` to initialize a new Git repository.\n<info added on 2025-07-08T05:23:14.028Z>\nRun git init in the current directory and check the default Git configuration settings by executing git config --list to verify details like username and email.\n</info added on 2025-07-08T05:23:14.028Z>\n<info added on 2025-07-08T05:24:30.157Z>\nGit repository initialization complete. An existing repository was detected. The files (.cursor/, .env.example, .gitignore, .taskmaster/) have been staged, and the first commit was created with the message \"feat: Initialize Task Master project with PRD and initial structure\", adding 12 files with 1,841 lines. The work is currently on the main branch.\n</info added on 2025-07-08T05:24:30.157Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -25,8 +25,8 @@
             "title": "Set Up Python 3.13.3 Virtual Environment Using uv",
             "description": "Install Python 3.13.3 and create a virtual environment using the uv package manager.",
             "dependencies": [],
-            "details": "Use `uv python install 3.13.3` to install Python 3.13.3, then run `uv venv --python 3.13.3` to create a virtual environment.",
-            "status": "pending",
+            "details": "Use `uv python install 3.13.3` to install Python 3.13.3, then run `uv venv --python 3.13.3` to create a virtual environment.\n<info added on 2025-07-08T05:26:15.136Z>\nPython 3.13.3 virtual environment fully configured and activated. Verified uv 0.7.3 installation; ran \"uv python install 3.13.3\" to install Python, followed by \"uv venv --python 3.13.3\" to create the .venv directory. Activated the environment with \"source .venv/bin/activate\", confirmed the Python version is 3.13.3 and the prompt now displays (super-rapidgator) indicating a successful setup.\n</info added on 2025-07-08T05:26:15.136Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -36,8 +36,8 @@
             "dependencies": [
               2
             ],
-            "details": "Activate the virtual environment and use `uv pip install <package_name>` to install required packages.",
-            "status": "pending",
+            "details": "Activate the virtual environment and use `uv pip install <package_name>` to install required packages.\n<info added on 2025-07-08T05:28:33.714Z>\nEssential packages have been successfully installed. Additionally, the project was initialized using \"uv init\" to generate pyproject.toml, main.py, and README.md, and the .python-version file was removed to resolve pyenv conflicts. The installed packages include web server tools (fastapi 0.116.0, uvicorn 0.35.0, httpx 0.28.1, jinja2 3.1.6, python-multipart 0.0.20) and file handling utilities (aiofiles 24.1.0, patool 4.0.1, py7zr 1.0.0, rarfile 4.2), among others, with a total of 38 packages and all dependencies resolved.\n</info added on 2025-07-08T05:28:33.714Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -48,8 +48,8 @@
               1,
               2
             ],
-            "details": "Create directories such as `src`, `tests`, and `docs` to structure the project appropriately.",
-            "status": "pending",
+            "details": "Create directories such as `src`, `tests`, and `docs` to structure the project appropriately.\n<info added on 2025-07-08T05:33:15.389Z>\nProject structure updated as follows:\n- Created src/super_rapidgator package with:\n  • api for API routes\n  • core for configuration and common functions including src/super_rapidgator/core/config.py for Pydantic settings\n  • services for business logic\n  • models for data models\n  • utils for utility functions\n- Added static directory for CSS and JS files, and templates directory for Jinja2 templates\n- Established tests and docs directories\n- Generated essential core files: .env as the environment variable template and main.py as the FastAPI app entrypoint\n- Installed pydantic-settings (2.10.1)\n- Validated setup by successfully running the FastAPI application and confirming proper loading of all configuration files.\n</info added on 2025-07-08T05:33:15.389Z>",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -64,8 +64,62 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create the main FastAPI application",
+            "description": "Initialize the FastAPI application and configure essential settings. [Updated: 2025. 7. 8.] [Updated: 2025. 7. 8.]",
+            "dependencies": [],
+            "details": "Set up the main application file (e.g., `main.py`) to create an instance of FastAPI, configure middleware, and include routers.\n<info added on 2025-07-08T06:31:16.750Z>\nRefactor main.py to enhance structure: integrate CORS middleware, implement centralized exception handling, organize API routers more effectively, and configure detailed logging for improved traceability and debugging.\n</info added on 2025-07-08T06:31:16.750Z>\n<info added on 2025-07-08T06:33:10.353Z>\nBegin enhancements on the main FastAPI application by refactoring main.py into a more structured and modular format. Incorporate CORS support, centralized exception handling, reorganized API routers, and advanced logging configuration to improve traceability and maintainability.\n</info added on 2025-07-08T06:33:10.353Z>\n<info added on 2025-07-08T06:39:20.164Z>\nCompleted enhancements to the main FastAPI application, which now includes environment-specific CORS middleware, an advanced Loguru logging system for both colorful console output and production file logging, and robust exception handlers for HTTP and general errors with detailed responses. The application has been restructured using the app factory pattern via a create_app() function, enabling automatic logging of all HTTP requests and responses and lifecycle event hooks that manage directory creation and logging during server startup and shutdown. In addition, the enhanced health-check endpoint now verifies download path accessibility, and template states are centrally stored in app.state.templates for use in routers. Updated dependencies include python-jose[cryptography] (v3.5.0) for JWT/encryption support and loguru (v0.7.3) for advanced logging. Testing has confirmed successful FastAPI app import, correct configuration loading (Debug: True, Port: 8000), and fully functional logging.\n</info added on 2025-07-08T06:39:20.164Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Set up API routers",
+            "description": "Organize the application's endpoints using FastAPI's APIRouter.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create separate router modules for different resource groups (e.g., `users`, `items`) and include them in the main application.\n<info added on 2025-07-08T06:40:28.835Z>\nInitiate API router configuration according to the Super Rapidgator PRD. Create separate modules for the following routes: /auth (Rapidgator authentication management), /download (batch download management), /extract (archive extraction and cleanup), and / (main web UI). Each router should be placed in the src/super_rapidgator/api/ directory and registered in main.py.\n</info added on 2025-07-08T06:40:28.835Z>\n<info added on 2025-07-08T06:46:09.175Z>\nAPI routers have been configured and integrated into the main application. The implementation includes the following router modules:\n\n1. auth.py for Rapidgator authentication management (accessed via /api/auth) with endpoints for session status, login, logout, session refresh, and health checks.\n2. download.py for batch download management (accessed via /api/download) with endpoints to start downloads, list batches, view batch details, cancel batches, check the download queue, and perform health checks.\n3. extract.py for archive extraction and cleanup (accessed via /api/extract) offering endpoints to start extraction tasks, list jobs, view job details, cancel jobs, scan directories, check extraction queues, and perform health checks.\n4. ui.py for the web UI (accessed via /) with endpoints for the main dashboard, download and extraction management pages, authentication page, download form submission, a custom API documentation page, system status, and UI-specific health checks.\n\nA total of 27 endpoints have been created, incorporating Pydantic model validation, asynchronous background task handling, status-based task management, UUID-based identifiers, and temporary in-memory storage with plans for future database integration. All routers have been successfully registered in main.py and have passed initial testing for endpoint registration and FastAPI app integration.\n</info added on 2025-07-08T06:46:09.175Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement middleware",
+            "description": "Add middleware to handle cross-cutting concerns such as CORS, authentication, and logging.",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure middleware components in the main application to manage tasks like CORS handling, request/response logging, and authentication.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Define base endpoints",
+            "description": "Establish foundational API endpoints for the application.",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement basic endpoints in the routers to handle CRUD operations for primary resources.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate Pydantic models",
+            "description": "Define data models using Pydantic for request validation and response serialization.",
+            "dependencies": [
+              4
+            ],
+            "details": "Create Pydantic models to validate incoming request data and serialize outgoing responses, ensuring data integrity and automatic documentation generation.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 3,
@@ -90,8 +144,62 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Playwright Browser Instance Management",
+            "description": "Initialize and manage Playwright browser instances to facilitate headless browser automation for Rapidgator login session management.",
+            "dependencies": [],
+            "details": "This involves setting up Playwright in the project, configuring browser contexts, and ensuring proper resource management for efficient automation.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Automate Login Form Submission with CSRF Token Handling",
+            "description": "Develop automation scripts to interact with Rapidgator's login form, including handling CSRF tokens to ensure secure authentication.",
+            "dependencies": [
+              1
+            ],
+            "details": "Utilize Playwright to navigate to the login page, fill in credentials, manage CSRF tokens, and submit the form programmatically.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Session Cookie Storage and Management",
+            "description": "Create mechanisms to store and manage session cookies post-login to maintain authenticated sessions across browser instances.",
+            "dependencies": [
+              2
+            ],
+            "details": "After successful login, extract session cookies and implement storage solutions to persist these cookies for future use.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Develop Session Validity Verification and Auto Re-login Mechanism",
+            "description": "Implement functionality to verify the validity of the current session and automatically re-authenticate if the session has expired.",
+            "dependencies": [
+              3
+            ],
+            "details": "Regularly check session status by accessing protected resources; if access is denied due to session expiry, trigger the login automation to re-establish a valid session.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate with API Endpoint and Provide Manual Override Options",
+            "description": "Connect the automated login and session management system with the relevant API endpoints and offer manual override capabilities for user intervention.",
+            "dependencies": [
+              4
+            ],
+            "details": "Ensure seamless integration with Rapidgator's API for data retrieval or submission, and implement features that allow users to manually override automated processes when necessary.\n<info added on 2025-07-08T08:48:22.697Z>\nReal-world tests confirm that premium downloads now function flawlessly with full integration into the Super Rapidgator system. The process correctly handles 302 redirects to connect to the actual download server, extracts the accurate download URL, manages ERR_ABORTED responses as successful completions, and retrieves the proper file name. This test completed with one successful item and no failures, verifying that the premium download workflow is fully operational.\n</info added on 2025-07-08T08:48:22.697Z>",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 5,
@@ -104,7 +212,7 @@
           2,
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -117,8 +225,62 @@
         "dependencies": [
           5
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Configure Celery with Redis as the Message Broker",
+            "description": "Set up Celery to use Redis for managing task queues and results.",
+            "dependencies": [],
+            "details": "Install Redis and Celery, then configure Celery to use Redis as both the broker and backend.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop Celery Tasks for Parallel URL Downloads",
+            "description": "Create Celery tasks that handle downloading files from specified URLs concurrently.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement tasks that accept a URL, download the content, and store it appropriately, ensuring they can run in parallel.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate Celery Tasks with FastAPI Endpoints",
+            "description": "Expose FastAPI endpoints to trigger the download tasks and retrieve their statuses.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create endpoints that allow users to submit URLs for download and check the progress or result of these tasks.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Real-Time Task State Tracking",
+            "description": "Set up mechanisms to monitor and report the status of each download task in real-time.",
+            "dependencies": [
+              3
+            ],
+            "details": "Utilize Celery's result backend to track task states and provide endpoints or interfaces for users to view task progress and outcomes.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Optimize for Scalability and Performance on Ubuntu Server",
+            "description": "Ensure the system can handle multiple concurrent downloads efficiently on an Ubuntu server.",
+            "dependencies": [
+              4
+            ],
+            "details": "Configure Celery workers, adjust concurrency settings, and optimize network and I/O operations to achieve maximum download speeds and system responsiveness.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 7,
@@ -130,8 +292,50 @@
         "dependencies": [
           2
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Jinja2 템플릿 엔진 설정 및 FastAPI 통합",
+            "description": "FastAPI 애플리케이션에 Jinja2 템플릿 엔진을 설정하고 통합합니다.",
+            "dependencies": [],
+            "details": "Jinja2를 설치하고 FastAPI 애플리케이션에서 Jinja2Templates를 사용하여 템플릿 디렉토리를 설정합니다. ([fastapi.tiangolo.com](https://fastapi.tiangolo.com/advanced/templates/?utm_source=openai))",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Tailwind CSS v3.3 설정 및 CDN 통합",
+            "description": "Tailwind CSS v3.3을 설정하고 CDN을 통해 통합합니다.",
+            "dependencies": [],
+            "details": "HTML 파일의 <head> 섹션에 Tailwind CSS Play CDN 스크립트를 추가하여 스타일링을 적용합니다. ([tailwindcss.com](https://tailwindcss.com/docs/installation/play-cdn?utm_source=openai))\n<info added on 2025-07-08T23:48:22.131Z>\nTailwind CSS v3.3 has been fully integrated and the base UI structure completed. The base template (base.html) now employs a modern design system, while the dashboard page (dashboard.html) offers a clean, intuitive main interface. The download page (download.html) includes a URL input form with real-time progress tracking and batch management. The UI router has been enhanced for full integration with the live system, ensuring efficient download path delivery and authentication verification. The design emphasizes a modern, lightweight, and fully responsive layout with fast load times, smooth animations, and a refined color scheme featuring gradients. JavaScript enhancements provide real-time URL validation, AJAX-based download initiation and tracking, live system and authentication status updates, automatic refresh, and toast notifications. The server has been started for live testing.\n</info added on 2025-07-08T23:48:22.131Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "메인 페이지 디자인 (URL 입력 폼, 깔끔하고 직관적인 디자인)",
+            "description": "URL 입력 폼을 포함한 메인 페이지를 깔끔하고 직관적인 디자인으로 구현합니다.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Jinja2 템플릿을 사용하여 URL 입력 폼을 포함한 메인 페이지를 생성하고, Tailwind CSS를 활용하여 현대적이고 가벼운 UI/UX 디자인을 적용합니다.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "실시간 다운로드 진행 상황 표시 페이지",
+            "description": "실시간으로 다운로드 진행 상황을 표시하는 페이지를 구현합니다.",
+            "dependencies": [
+              3
+            ],
+            "details": "JavaScript와 AJAX를 사용하여 서버에서 다운로드 진행 상황을 주기적으로 가져와 페이지에 업데이트합니다.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 8,
@@ -143,7 +347,7 @@
         "dependencies": [
           7
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -199,11 +403,107 @@
         ],
         "status": "pending",
         "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement Redis Persistence and SSE for Real-Time Download Updates",
+        "description": "Integrate Redis for persisting DownloadBatch and DownloadItem data and create an SSE endpoint to stream real-time download status updates from Redis.",
+        "details": "Replace the in-memory storage in the Batch Download API endpoints with Redis to ensure that DownloadBatch and DownloadItem data persist across server restarts and can be shared between FastAPI and Celery workers. Modify Celery tasks so that they update progress in Redis and publish messages to Redis Pub/Sub channels (e.g., 'batch:{id}:events'). Develop a new Server-Sent Events (SSE) endpoint (e.g., /download/stream/{batch_id}) that subscribes to these Pub/Sub channels and streams JSON-formatted event messages to the UI. Additionally, implement an API endpoint allowing users to retry failed download items and update front-end components to handle live progress updates. Update documentation and the example .env file with Redis connection details, and ensure robust error handling and reconnection logic are in place.",
+        "testStrategy": "Write unit tests to confirm that DownloadBatch and DownloadItem data are correctly saved to and read from Redis. Simulate Celery task updates to verify that progress events are published to the appropriate Redis Pub/Sub channels, and use a SSE client (or EventSource in a browser) to test the SSE endpoint for accurate real-time streaming of JSON events. Test the retry endpoint by simulating failed download items and ensuring proper workflow. Validate that documentation reflects the correct Redis connection settings and that the system retains data after simulated server restarts.",
+        "status": "pending",
+        "dependencies": [
+          2,
+          5
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Redis Data Models/Utilities",
+            "description": "Create Redis schema and utility functions for persisting DownloadBatch and DownloadItem data. This involves defining how data will be stored (e.g., hashes, sets) and implementing helper methods for CRUD operations.",
+            "dependencies": [],
+            "details": "Define the data structure in Redis to map DownloadBatch and DownloadItem. Implement functions for saving, retrieving and deleting records. Ensure that these utilities can be easily imported into other modules such as API endpoints and Celery tasks.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to insert, retrieve, update, and delete sample data using these utilities, verifying data consistency."
+          },
+          {
+            "id": 2,
+            "title": "Migrate Batch Download API Endpoints to Redis",
+            "description": "Replace the in-memory storage in the Batch Download API endpoints with the newly created Redis utilities to persist the DownloadBatch and DownloadItem data.",
+            "dependencies": [
+              1
+            ],
+            "details": "Update API logic in FastAPI to utilize Redis functions for creating, reading, and updating download batches. Ensure all endpoints seamlessly integrate with Redis persistence.",
+            "status": "pending",
+            "testStrategy": "Use API tests to simulate batch creation and retrieval, checking that data persists across simulated service restarts."
+          },
+          {
+            "id": 3,
+            "title": "Enhance Celery Tasks for Progress Updates using Redis",
+            "description": "Modify Celery tasks to update progress in Redis and publish download events to Redis Pub/Sub channels. This update will allow real-time synchronization of progress status.",
+            "dependencies": [
+              1
+            ],
+            "details": "Integrate Redis Pub/Sub in Celery tasks so that each progress update writes to Redis and publishes a message (e.g., to a channel like 'batch:{id}:events'). Ensure proper key names and error handling are implemented.",
+            "status": "pending",
+            "testStrategy": "Execute Celery tasks in a controlled environment and verify that progress updates appear in Redis and that Pub/Sub messages are correctly sent."
+          },
+          {
+            "id": 4,
+            "title": "Develop SSE Endpoint for Real-Time Download Updates",
+            "description": "Implement a Server-Sent Events (SSE) endpoint in FastAPI (e.g., /download/stream/{batch_id}) that subscribes to Redis Pub/Sub channels to stream real-time, JSON-formatted event messages to the client.",
+            "dependencies": [
+              3
+            ],
+            "details": "Use FastAPI's support for streaming responses. Implement subscription to Redis channels and format messages as JSON events in SSE format. Include error handling and reconnection logic.",
+            "status": "pending",
+            "testStrategy": "Test the endpoint by subscribing with a client and generating sample events via Celery; verify that events are correctly pushed in real time."
+          },
+          {
+            "id": 5,
+            "title": "Implement API Endpoint for Retrying Failed Download Items",
+            "description": "Create a new API endpoint that allows users to retry failed download items. This endpoint should trigger appropriate logic to re-initiate processing and update statuses in Redis.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Define a route in FastAPI that accepts a retry request for a given download item. Ensure the endpoint interacts with Redis to check current statuses and re-queue the download task if needed, updating progress via Celery tasks.",
+            "status": "pending",
+            "testStrategy": "Use integration tests by simulating a failed download and verifying that the endpoint resets the status and reprocesses the item successfully."
+          },
+          {
+            "id": 6,
+            "title": "Integrate SSE Updates with Front-End Components",
+            "description": "Update UI components to consume the new SSE endpoint for real-time download progress updates and reflect status changes immediately on the client side.",
+            "dependencies": [
+              4
+            ],
+            "details": "Modify the front-end code to open an SSE connection to the /download/stream/{batch_id} endpoint and listen for event messages. Implement logic to update UI progress bars and status notifications in response to these messages.",
+            "status": "pending",
+            "testStrategy": "Perform end-to-end tests by triggering download actions and verifying that the UI reflects progress updates in real time using the SSE stream."
+          },
+          {
+            "id": 7,
+            "title": "Update Documentation and Environment Configuration",
+            "description": "Revise project documentation and update the .env example file with Redis-specific connection details. Document error handling strategies and reconnection logic for both Redis integrations and SSE.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "details": "Provide clear instructions on how to configure Redis (host, port, password, etc.), detail the design decisions and error handling approaches in the README, and include necessary instructions on testing the Redis+SSE features.",
+            "status": "pending",
+            "testStrategy": "Conduct a review session where a team member follows the updated documentation to set up the environment and validate that all configurations work as intended."
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-07-08T05:20:10.514Z",
-      "updated": "2025-07-08T05:23:24.588Z",
+      "updated": "2025-07-09T04:39:32.452Z",
       "description": "Tasks for master context"
     }
   }

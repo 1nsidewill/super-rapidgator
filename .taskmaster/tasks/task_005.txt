@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: Develop Batch Download API Endpoints
+# Status: done
+# Dependencies: 2, 4
+# Priority: medium
+# Description: Create API endpoints to accept multiple Rapidgator URLs for batch download, ensure request validation and provide a progress update mechanism.
+# Details:
+Implement POST endpoint at /api/download/start accepting a list of URLs. Validate input using Pydantic models. Integrate with Rapidgator client to initiate downloads. Update task status (pending, downloading, completed, failed) in the database or in-memory store. Use endpoints like /api/download/status/{task_id} to fetch progress.
+
+# Test Strategy:
+Write integration tests for API by sending POST requests with valid and invalid URL lists. Validate response structure and progress tracking. Use unit tests for Pydantic validations.

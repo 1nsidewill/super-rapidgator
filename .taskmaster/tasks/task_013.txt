@@ -1,0 +1,11 @@
+# Task ID: 13
+# Title: Implement Redis Persistence and SSE for Real-Time Download Updates
+# Status: pending
+# Dependencies: 2, 5
+# Priority: medium
+# Description: Integrate Redis for persisting DownloadBatch and DownloadItem data and create an SSE endpoint to stream real-time download status updates from Redis.
+# Details:
+Replace the in-memory storage in the Batch Download API endpoints with Redis to ensure that DownloadBatch and DownloadItem data persist across server restarts and can be shared between FastAPI and Celery workers. Modify Celery tasks so that they update progress in Redis and publish messages to Redis Pub/Sub channels (e.g., 'batch:{id}:events'). Develop a new Server-Sent Events (SSE) endpoint (e.g., /download/stream/{batch_id}) that subscribes to these Pub/Sub channels and streams JSON-formatted event messages to the UI. Additionally, implement an API endpoint allowing users to retry failed download items and update front-end components to handle live progress updates. Update documentation and the example .env file with Redis connection details, and ensure robust error handling and reconnection logic are in place.
+
+# Test Strategy:
+Write unit tests to confirm that DownloadBatch and DownloadItem data are correctly saved to and read from Redis. Simulate Celery task updates to verify that progress events are published to the appropriate Redis Pub/Sub channels, and use a SSE client (or EventSource in a browser) to test the SSE endpoint for accurate real-time streaming of JSON events. Test the retry endpoint by simulating failed download items and ensuring proper workflow. Validate that documentation reflects the correct Redis connection settings and that the system retains data after simulated server restarts.

@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Develop Extraction Engine for Nested Archives
+# Status: pending
+# Dependencies: 9
+# Priority: medium
+# Description: Create a robust extraction engine to automatically detect, recursively extract various archive formats (ZIP, RAR, etc.) and handle nested archives.
+# Details:
+Implement extraction logic using Python libraries: zipfile for ZIP, rarfile for RAR (ensure unrar is installed), and py7zr for 7z files. Design a recursive function to handle nested archives (peeldown functionality) and integrate pattern matching for multi-part archives. Include safeguards to avoid infinite recursion in cases of corrupted archives.
+
+# Test Strategy:
+Use sample archives with known nested structure to test extraction. Create unit tests to simulate edge cases including unsupported formats and corrupt archives. Validate that unnecessary temporary files are properly cleaned up.
