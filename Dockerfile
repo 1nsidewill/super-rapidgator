@@ -11,6 +11,7 @@ WORKDIR /app
 RUN uv sync --frozen --no-cache
 
 ENV PYTHONPATH="/app/src:/app:${PYTHONPATH}"
+ENV TZ=Asia/Seoul
 
 # Run the application.
 CMD ["/app/.venv/bin/fastapi", "run", "main.py", "--port", "8000", "--host", "0.0.0.0"]
