@@ -41,8 +41,8 @@ class Settings(BaseSettings):
     redis_url: Optional[str] = None
     
     # Celery
-    CELERY_BROKER_URL: str = "redis://10.0.0.1:6379/0"
-    CELERY_RESULT_BACKEND: str = "redis://10.0.0.1:6379/0"
+    CELERY_BROKER_URL: str = ""
+    CELERY_RESULT_BACKEND: str = ""
     CELERY_TASK_SERIALIZER: str = "json"
     CELERY_ACCEPT_CONTENT: list[str] = ["json"]
     CELERY_RESULT_SERIALIZER: str = "json"
